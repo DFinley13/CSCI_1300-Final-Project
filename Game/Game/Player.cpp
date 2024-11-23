@@ -1,4 +1,5 @@
-#include "Player.h"
+
+#include "player.h"
 #include <iostream>
 
 using namespace std;
@@ -162,4 +163,8 @@ void Player::printStats(){
     cout << "Stamina: " << _stamina << endl;
     cout << "Wisdom: " << _wisdom << endl;
     cout << "Pride Points: " << _pride_points << endl;
+}
+
+string Player::getAdvisor() {
+    return advisorName;
 }

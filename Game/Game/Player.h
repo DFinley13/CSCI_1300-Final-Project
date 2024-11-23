@@ -1,3 +1,4 @@
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -27,6 +28,7 @@ class Player{
     int getWisdom();
     int getPridePoints();
     int getAge();
+    string getAdvisor();
 
     //Setters
     void setName(string name);

@@ -1,4 +1,7 @@
-#include "Game.h"
+
+#include "game.h"
+#include "Board.h"
+#include "player.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -136,4 +139,94 @@ void Game::startGame() {
         _players[i].printStats();
         cout << endl;
     }
+}
+
+int Game::spinner() {
+    // random seed
+    srand(time(0));
+    int spinner_out_put = 0;
+
+    // Random number 1-7
+    spinner_out_put = rand() % 8;
+
+    // Give the output
+    return spinner_out_put;
+}
+
+// Outputs as a public tool the amount of players
+int Game::amountOfPlayers() {
+    return _characters.size();
+}
+
+void Game::mainMenu() {
+    bool validchoice = false;
+    Board b;
+    Player p;
+    int idx = 0;
+    do
+    {
+    cout << "Main Menu: Select an option to continue \n"  
+    "1. Check Player Progress \n" 
+    "2. Review Character \n"
+    "3. Check Position \n"
+    "4. Review your Advisor \n"
+    "5. Move Forward \n \n" 
+    "Please choose an option using the corresponding number: \n";
+
+    int menuChoice;
+    cin >> menuChoice;
+
+    if (menuChoice < 1 || menuChoice > 5)
+    {
+        cout << "Invalid Choice!" << endl;
+    } else if (menuChoice == 1) {
+        char choice;
+        while (validchoice == false)
+        {
+            cout << "Do you want to convert your Leadership Traits to Pride Points? \n"
+            "Y for yes N for no \n";
+            cin >> choice;
+            if (choice != 'Y' || choice != 'N') {
+            cout << "Invalid Input \n";
+            } else if (choice == 'Y') {
+                int testStamina = p.getStamina();
+                int testStrength = p.getStrength();
+                int testWisdom = p.getWisdom();
+                int testPridePoints = p.getPridePoints();
+                while (testStamina > 100)
+                {
+                    testStamina -= 100;
+                    testPridePoints += 1000;
+                }
+                while (testStrength > 100) {
+                    testStrength -= 100;
+                    testPridePoints += 1000;
+                } 
+                while (testWisdom > 100) {
+                    testWisdom -= 100;
+                    testPridePoints += 1000;
+                }
+                cout << "Current Pride Points: " << testPridePoints << endl;
+                break;
+            } else {
+                cout << p.getPridePoints();
+                break;
+            }
+        }
+    } else if (menuChoice == 2) {
+        p.printStats();
+    } else if (menuChoice == 3) {
+         b.displayBoard();
+    } else if (menuChoice == 4) {
+        p.getAdvisor();
+        //add the rest of the choice -for david
+    } else if (menuChoice == 5) {
+        b.movePlayer(idx);
+    } else {
+        cout << "Invalid Choice" << endl;
+    }
+    
+    idx++;
+    } while (validchoice == false);
+
 }

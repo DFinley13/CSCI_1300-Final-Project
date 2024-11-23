@@ -1,4 +1,6 @@
+
 #include "Board.h"
+#include "game.h"
 #define RED "\033[48;2;230;10;10m"
 #define GREEN "\033[48;2;34;139;34m" /* Grassy Green (34,139,34) */
 #define BLUE "\033[48;2;10;10;230m"
@@ -155,16 +157,23 @@ void Board::displayTile(int player_index, int pos)
     }
 }
 
-// bool Board::movePlayer(int player_index){
-//     //Increment player position
-//     _player_position[player_index]++;
-//     if (_player_position[player_index] == _BOARD_SIZE - 1)
-//     {
-//          // Player reached last tile
-//          return true;
-//     }
-//          return false;
-//     }
+bool Board::movePlayer(int player_index){
+    // Game game;
+    // int players = game.amountOfPlayers();
+    // for (int i = 0; i < players; i++)
+    // {
+    //     /* code */
+    // }
+    
+    //Increment player position
+    _player_position[player_index]++;
+    if (_player_position[player_index] == _BOARD_SIZE - 1)
+    {
+         // Player reached last tile
+         return true;
+    }
+         return false;
+    }
 // int Board::getPlayerPosition(int player_index) const{
 //     if (player_index >= 0 && player_index <= _player_count){
 //          return _player_position[player_index];
