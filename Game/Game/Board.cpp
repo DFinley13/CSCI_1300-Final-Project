@@ -18,8 +18,10 @@ for (int i = 0; i < 2; i++)
     initializeTiles(i); // This ensures each lane has a unique tile distribution
 }
 }
+
 #include <cstdlib> // For rand() and srand()
 #include <ctime> // For time()
+
 void Board::initializeTiles(int player_index)
 {
 Tile temp;
@@ -66,14 +68,16 @@ int total_tiles = _BOARD_SIZE;
     _tiles[player_index][i] = temp;
 }
 }
-// Board::Board()
-// {
-// _player_count = 1;
-// // Initialize player position
-// _player_position[0] = 0;
-// // Initialize tiles
-// initializeTiles();
-// }
+
+Board::Board()
+{
+_player_count = 1;
+// Initialize player position
+_player_position[0] = 0;
+// Initialize tiles
+initializeTiles(_player_count);
+}
+
 Board::Board(int player_count)
 {
     if (player_count > _MAX_PLAYERS){
@@ -90,6 +94,7 @@ Board::Board(int player_count)
     // Initialize tiles
     initializeBoard();
 }
+
 bool Board::isPlayerOnTile(int player_index, int pos)
 {
 if (_player_position[player_index] == pos){
@@ -97,6 +102,7 @@ if (_player_position[player_index] == pos){
 }
     return false;
 }
+
 void Board::displayTile(int player_index, int pos)
 {
     // string space = " ";
@@ -173,7 +179,16 @@ bool Board::movePlayer(int player_index){
          return true;
     }
          return false;
-    }
+}
+    
+// //if (_player_position[_player_position[i]] == _BOARD_SIZE - 1)
+//         {
+//          // Player reached last tile
+//          return true;
+//         } else {
+//          return false; 
+//         }
+    
 // int Board::getPlayerPosition(int player_index) const{
 //     if (player_index >= 0 && player_index <= _player_count){
 //          return _player_position[player_index];

@@ -29,6 +29,7 @@ class Player{
     int getPridePoints();
     int getAge();
     string getAdvisor();
+    string getAdvisorAbility();
 
     //Setters
     void setName(string name);
@@ -45,9 +46,10 @@ class Player{
     void addPridePoints(int pride_points);
     void addAge(int age);
 
+    //Anthony
     void setAdvisor(string name, string ability);
     void traincub(int strength, int stamina, int wisdom);
-    void choosePath(int pathChoice);
+    void choosePath();
     void toPrideLands(); 
     void printStats();
 

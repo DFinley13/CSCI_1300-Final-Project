@@ -111,7 +111,8 @@ void Player::setAdvisor(string adName, string adAbility){
     advisorAbility = adAbility;
 }
 
-void Player::choosePath(int pathChoice) {
+void Player::choosePath() {
+    int pathChoice;
     // Keep asking until the player chooses a valid path
     do {
         cout << "Choose your path:" << endl;
@@ -167,4 +168,8 @@ void Player::printStats(){
 
 string Player::getAdvisor() {
     return advisorName;
+}
+
+string Player::getAdvisorAbility() {
+    return advisorAbility;
 }

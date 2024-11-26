@@ -1,11 +1,12 @@
-#include "Game.h"
+
+#include "game.h"
 #include "Board.h"
-#include "Player.h"
+#include "player.h"
 #include <cstdlib>
 #include <ctime>
 using namespace std;
 
-
+//Anthony
 int main() {
     srand(time(0)); // Seed random number generator
     Game game;
@@ -26,8 +27,10 @@ int main() {
     // Players select their characters
     game.selectCharacters(playerCount);
 
+    game.mainMenu();
     // Start the game
-    game.startGame();
+    // game.startGame();
 
-    return 0;
+    // cout << game.spinner();
+    // return 0;
 }

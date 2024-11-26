@@ -1,4 +1,4 @@
-
+//Anthony
 #include "game.h"
 #include "Board.h"
 #include "player.h"
@@ -85,13 +85,8 @@ void Game::selectCharacters(int playerCount) {
         _players.push_back(_characters[choice - 1]);
         selected[choice - 1] = true; // Mark the character as chosen
 
-        // Ask for path choice
-        cout << "Player " << i + 1 << ", choose your path 1 (Cub Training) or 2 (Straight to Pride Land): ";
-        int pathChoice;
-        cin >> pathChoice;
-
         // Apply path effects
-        _players[i].choosePath(pathChoice);
+        _players[i].choosePath();
     }
 
     // Confirm selections
@@ -141,6 +136,7 @@ void Game::startGame() {
     }
 }
 
+//David
 int Game::spinner() {
     // random seed
     srand(time(0));
@@ -155,17 +151,19 @@ int Game::spinner() {
 
 // Outputs as a public tool the amount of players
 int Game::amountOfPlayers() {
-    return _characters.size();
+    return _players.size();
 }
 
 void Game::mainMenu() {
-    bool validchoice = false;
+    for (int i = 0; i < _players.size(); i++)
+    {
+       bool validchoice = false;
     Board b;
     Player p;
     int idx = 0;
-    do
+    while (validchoice == false)
     {
-    cout << "Main Menu: Select an option to continue \n"  
+    cout << "Main Menu: Select an option to continue for player: " << i + 1 <<  "\n"  
     "1. Check Player Progress \n" 
     "2. Review Character \n"
     "3. Check Position \n"
@@ -186,13 +184,11 @@ void Game::mainMenu() {
             cout << "Do you want to convert your Leadership Traits to Pride Points? \n"
             "Y for yes N for no \n";
             cin >> choice;
-            if (choice != 'Y' || choice != 'N') {
-            cout << "Invalid Input \n";
-            } else if (choice == 'Y') {
-                int testStamina = p.getStamina();
-                int testStrength = p.getStrength();
-                int testWisdom = p.getWisdom();
-                int testPridePoints = p.getPridePoints();
+            if (choice == 'Y') {
+                int testStamina = _players[i].getStamina();
+                int testStrength = _players[i].getStrength();
+                int testWisdom = _players[i].getWisdom();
+                int testPridePoints = _players[i].getPridePoints();
                 while (testStamina > 100)
                 {
                     testStamina -= 100;
@@ -206,27 +202,46 @@ void Game::mainMenu() {
                     testWisdom -= 100;
                     testPridePoints += 1000;
                 }
-                cout << "Current Pride Points: " << testPridePoints << endl;
+                cout << "Player " << i + 1 << " combined Pride Points: " << testPridePoints << endl;
+                break;
+            } else if (choice == 'N') {
+                cout << "Player " << i + 1 << " current Pride Points: " << _players[i].getPridePoints() << endl;
                 break;
             } else {
-                cout << p.getPridePoints();
-                break;
+                cout << "Invalid option" << endl;
             }
         }
     } else if (menuChoice == 2) {
-        p.printStats();
+        _players[i].printStats();
     } else if (menuChoice == 3) {
          b.displayBoard();
     } else if (menuChoice == 4) {
-        p.getAdvisor();
-        //add the rest of the choice -for david
+        char continueInput;
+        bool valid = false;
+        cout << "Your advisor is: " <<  _players[i].getAdvisor() << endl;
+        cout << "Their ability is: " << _players[i].getAdvisorAbility() << endl;
+        cout << "Press Y to continue" << endl;
+        cin >> continueInput;
+        while (valid == false)
+        {
+            if (continueInput == 'Y')
+            {
+                break;
+            } else {
+                cout << "Press 'Y' to continue" << endl;
+            }
+        }
+        
     } else if (menuChoice == 5) {
-        b.movePlayer(idx);
+        b.movePlayer(i);
+        cout << "Player " << i + 1 << " moved foward: " << spinner() << " spaces" << endl;
+        break;
     } else {
         cout << "Invalid Choice" << endl;
     }
-    
     idx++;
-    } while (validchoice == false);
-
+         cout << "----------" << "\n" << endl;
+        }
+         cout << "----------" << "\n" << endl;
+    }
 }
