@@ -18,6 +18,7 @@ int main() {
     cout << "Enter the number of players (2 to 5): ";
     int playerCount;
     cin >> playerCount;
+    Board board = Board(playerCount);
 
     if (playerCount < 1 || playerCount > 5) {
         cerr << "Invalid number of players. Exiting game.\n";
@@ -27,10 +28,15 @@ int main() {
     // Players select their characters
     game.selectCharacters(playerCount);
 
+    //Load the board
+    board.initializeBoard();
+    board.displayBoard();
+
     game.mainMenu();
     // Start the game
     // game.startGame();
 
+    // //david
     // cout << game.spinner();
     // return 0;
 }

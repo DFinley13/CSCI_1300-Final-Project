@@ -31,14 +31,13 @@ int total_tiles = _BOARD_SIZE;
     for (int i = 0; i < total_tiles; i++){
         if (i == total_tiles - 1) {
     // Set the last tile as Orange for "Pride Rock"
-            temp.setColor("0");
+            temp.setColor("O");
     }
         else if (i == 0) {
     // Set the last tile as Orange for "Pride Rock"
         temp.setColor("Y");
     }
-    else if (green_count < 30 && (rand() % (total_tiles - i) < 30 -
-        green_count)) {
+    else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) {
         temp.setColor("G");
         green_count++;
     }
@@ -71,9 +70,9 @@ int total_tiles = _BOARD_SIZE;
 
 Board::Board()
 {
-_player_count = 1;
+_player_count = 0;
 // Initialize player position
-_player_position[0] = 0;
+_player_position[_player_count] = 0;
 // Initialize tiles
 initializeTiles(_player_count);
 }
@@ -107,7 +106,7 @@ void Board::displayTile(int player_index, int pos)
 {
     // string space = " ";
     string color = "";
-    int player = isPlayerOnTile(player_index, pos);
+    bool player = isPlayerOnTile(player_index, pos);
     // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| <reset color> <line filler space> <endl>
     // Determine color to display
     if (_tiles[player_index][pos].getColor() == "R"){
@@ -144,6 +143,7 @@ void Board::displayTile(int player_index, int pos)
     cout << color << "| |" << RESET;
     }
     }
+
     void Board::displayTrack(int player_index)
     {
     for (int i = 0; i < _BOARD_SIZE; i++)
@@ -152,6 +152,7 @@ void Board::displayTile(int player_index, int pos)
     }
     cout << endl;
     }
+
     void Board::displayBoard()
     {
     for (int i = 0; i < 2; i++)
@@ -163,35 +164,28 @@ void Board::displayTile(int player_index, int pos)
     }
 }
 
-bool Board::movePlayer(int player_index){
-    // Game game;
-    // int players = game.amountOfPlayers();
-    // for (int i = 0; i < players; i++)
-    // {
-    //     /* code */
-    // }
-    
-    //Increment player position
-    _player_position[player_index]++;
-    if (_player_position[player_index] == _BOARD_SIZE - 1)
-    {
-         // Player reached last tile
-         return true;
+bool Board::movePlayer(int player_index, int moveamount) {
+    // Example move logic for the player at index player_index
+    int currentPosition = _player_position[player_index];
+    currentPosition += moveamount; // Move the player by the spinner value
+    _player_position[player_index] = currentPosition;
+
+    // Add a check for a winning condition
+    if (currentPosition >= _BOARD_SIZE - 1) {
+        return true; // Player has won
     }
-         return false;
+
+    return false;
 }
     
-// //if (_player_position[_player_position[i]] == _BOARD_SIZE - 1)
-//         {
-//          // Player reached last tile
-//          return true;
-//         } else {
-//          return false; 
-//         }
     
-// int Board::getPlayerPosition(int player_index) const{
-//     if (player_index >= 0 && player_index <= _player_count){
-//          return _player_position[player_index];
-//     }
-//     return -1;
-// }
+int Board::getPlayerPosition(int player_index) const{
+    if (player_index >= 0 && player_index <= _player_count){
+         return _player_position[player_index];
+    } 
+    return -1;
+}
+
+void Board::setPlayer_count(int newplayerCount) {
+    _player_count = newplayerCount;
+}

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+Board _board;
 
 using namespace std;
 
@@ -138,12 +139,11 @@ void Game::startGame() {
 
 //David
 int Game::spinner() {
-    // random seed
     srand(time(0));
     int spinner_out_put = 0;
 
     // Random number 1-7
-    spinner_out_put = rand() % 8;
+    spinner_out_put = rand() % 7 + 1;
 
     // Give the output
     return spinner_out_put;
@@ -155,12 +155,11 @@ int Game::amountOfPlayers() {
 }
 
 void Game::mainMenu() {
+    // For each players turn
     for (int i = 0; i < _players.size(); i++)
     {
+        //To continue the while loop
        bool validchoice = false;
-    Board b;
-    Player p;
-    int idx = 0;
     while (validchoice == false)
     {
     cout << "Main Menu: Select an option to continue for player: " << i + 1 <<  "\n"  
@@ -214,7 +213,7 @@ void Game::mainMenu() {
     } else if (menuChoice == 2) {
         _players[i].printStats();
     } else if (menuChoice == 3) {
-         b.displayBoard();
+        _board.displayTrack(i);
     } else if (menuChoice == 4) {
         char continueInput;
         bool valid = false;
@@ -233,14 +232,23 @@ void Game::mainMenu() {
         }
         
     } else if (menuChoice == 5) {
-        b.movePlayer(i);
-        cout << "Player " << i + 1 << " moved foward: " << spinner() << " spaces" << endl;
-        break;
+            // Move player forward
+            int moveAmount = spinner();
+            bool won = false;
+
+            // Call movePlayer with the current player index
+                won = _board.movePlayer(i, moveAmount); // Move the player i
+                if (won == true) {
+                    cout << "Player " << i + 1 << " has won!" << endl;
+                    break;
+                }
+            cout << "Player " << i + 1 << " moved forward: " << moveAmount << " spaces." << endl;
+            _board.displayTrack(i); // Display the updated track
+            validchoice = true;
+        
     } else {
         cout << "Invalid Choice" << endl;
     }
-    idx++;
-         cout << "----------" << "\n" << endl;
         }
          cout << "----------" << "\n" << endl;
     }

@@ -1,4 +1,5 @@
 
+//Anthony
 #ifndef GAME_H
 #define Game_H
 
@@ -20,6 +21,7 @@ class Game{
     void selectAdvisor();
     void startGame();
 
+    //David
     int spinner();
     int amountOfPlayers();
     void mainMenu();
