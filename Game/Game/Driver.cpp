@@ -8,8 +8,11 @@ using namespace std;
 
 //Anthony
 int main() {
+    Tile _tile;
     srand(time(0)); // Seed random number generator
     Game game;
+    Board _board;
+
 
     // Load characters from the file
     game.loadCharacters("characters.txt");
@@ -18,7 +21,6 @@ int main() {
     cout << "Enter the number of players (2 to 5): ";
     int playerCount;
     cin >> playerCount;
-    Board board = Board(playerCount);
 
     if (playerCount < 1 || playerCount > 5) {
         cerr << "Invalid number of players. Exiting game.\n";
@@ -28,15 +30,16 @@ int main() {
     // Players select their characters
     game.selectCharacters(playerCount);
 
-    //Load the board
-    board.initializeBoard();
-    board.displayBoard();
+    game.startGame();
 
-    game.mainMenu();
-    // Start the game
-    // game.startGame();
+    
 
-    // //david
-    // cout << game.spinner();
-    // return 0;
+    bool playerWon = false;
+    while (playerWon == false)
+    {
+        playerWon = game.mainMenu();
+    }
+    
+    
+    return 0;
 }

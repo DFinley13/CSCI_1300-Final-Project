@@ -49,7 +49,7 @@ class Player{
     //Anthony
     void setAdvisor(string name, string ability);
     void traincub(int strength, int stamina, int wisdom);
-    void choosePath();
+    int choosePath();
     void toPrideLands(); 
     void printStats();
 

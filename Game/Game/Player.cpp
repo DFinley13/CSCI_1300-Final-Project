@@ -111,7 +111,7 @@ void Player::setAdvisor(string adName, string adAbility){
     advisorAbility = adAbility;
 }
 
-void Player::choosePath() {
+int Player::choosePath() {
     int pathChoice;
     // Keep asking until the player chooses a valid path
     do {
@@ -144,6 +144,7 @@ void Player::choosePath() {
     else{
             cout << "Invalid choice, please select 1 or 2." << endl;
     }
+    return pathChoice;
 }
 void Player::traincub(int strength, int stamina, int wisdom){
     addStrength(strength);
