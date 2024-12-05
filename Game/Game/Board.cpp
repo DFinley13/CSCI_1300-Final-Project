@@ -1,5 +1,12 @@
+
 //Anthony and David
+=======
+
 #include "Board.h"
+#include "game.h"
+#include "player.h"
+#include <cstdlib> // For rand() and srand()
+#include <ctime> // For time()
 #define RED "\033[48;2;230;10;10m"
 #define GREEN "\033[48;2;34;139;34m" /* Grassy Green (34,139,34) */
 #define BLUE "\033[48;2;10;10;230m"
@@ -17,8 +24,7 @@ for (int i = 0; i < 2; i++)
     initializeTiles(i); // This ensures each lane has a unique tile distribution
 }
 }
-#include <cstdlib> // For rand() and srand()
-#include <ctime> // For time()
+
 void Board::initializeTiles(int player_index)
 {
 Tile temp;
@@ -28,14 +34,13 @@ int total_tiles = _BOARD_SIZE;
     for (int i = 0; i < total_tiles; i++){
         if (i == total_tiles - 1) {
     // Set the last tile as Orange for "Pride Rock"
-            temp.setColor("0");
+            temp.setColor("O");
     }
         else if (i == 0) {
     // Set the last tile as Orange for "Pride Rock"
         temp.setColor("Y");
     }
-    else if (green_count < 30 && (rand() % (total_tiles - i) < 30 -
-        green_count)) {
+    else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) {
         temp.setColor("G");
         green_count++;
     }
@@ -65,14 +70,16 @@ int total_tiles = _BOARD_SIZE;
     _tiles[player_index][i] = temp;
 }
 }
-// Board::Board()
-// {
-// _player_count = 1;
-// // Initialize player position
-// _player_position[0] = 0;
-// // Initialize tiles
-// initializeTiles();
-// }
+
+Board::Board()
+{
+_player_count = 0;
+// Initialize player position
+_player_position[_player_count] = 0;
+// Initialize tiles
+initializeTiles(_player_count);
+}
+
 Board::Board(int player_count)
 {
     if (player_count > _MAX_PLAYERS){
@@ -89,62 +96,68 @@ Board::Board(int player_count)
     // Initialize tiles
     initializeBoard();
 }
-bool Board::isPlayerOnTile(int player_index, int pos)
-{
-if (_player_position[player_index] == pos){
-    return true;
-}
+
+bool Board::isPlayerOnTile(int player_index, int pos, int lane) {
+    if (player_index == pos && lane == 0)
+    {
+        return true;
+    }
     return false;
 }
-void Board::displayTile(int player_index, int pos)
-{
-    // string space = " ";
+
+
+void Board::displayTile(int player_index, int pos, int lane) {
     string color = "";
-    int player = isPlayerOnTile(player_index, pos);
-    // Template for displaying a tile: <line filler space> <color start> |<player symbol or blank space>| <reset color> <line filler space> <endl>
-    // Determine color to display
-    if (_tiles[player_index][pos].getColor() == "R"){
-        color = RED;
-    }
-    else if (_tiles[player_index][pos].getColor() == "G"){
-        color = GREEN;
-    }
-    else if (_tiles[player_index][pos].getColor() == "B"){
-        color = BLUE;
-    }
-    else if (_tiles[player_index][pos].getColor() == "U"){
-        color = PURPLE;
-    }
-    else if (_tiles[player_index][pos].getColor() == "N"){
-        color = BROWN;
-    }
-    else if (_tiles[player_index][pos].getColor() == "P"){
-        color = PINK;
-    }
-    else if (_tiles[player_index][pos].getColor() == "O"){
-        color = ORANGE;
-    }
-    else if (_tiles[player_index][pos].getColor() == "Y")
-    {
+    bool player1_on_tile = (_player_position[0] == pos && _player_lane[0] == lane);
+    bool player2_on_tile = (_player_position[1] == pos && _player_lane[1] == lane);
+
+    bool onLaneOne = isPlayerOnTile(player_index, pos, lane);
+
+    // Determine color for the tile
+    string tileColor = _tiles[player_index][pos].getColor();
+    if (tileColor == "R") {
+    color = RED;
+    } else if (tileColor == "G") {
+    color = GREEN;
+    } else if (tileColor == "B") {
+    color = BLUE;
+    } else if (tileColor == "U") {
+    color = PURPLE;
+    } else if (tileColor == "N") {
+    color = BROWN;
+    } else if (tileColor == "P")  {
+    color = PINK;
+    } else if (tileColor == "O") {
+    color = ORANGE;
+    } else if (tileColor == "Y") {
     color = GREY;
     }
-    if (player == true)
-    {
-    cout << color << "|" << (player_index + 1) << "|" << RESET;
+
+    // Display logic
+    cout << color << "|";
+    if (player1_on_tile && player2_on_tile) {
+        cout << "1&2";  // Both players on the same tile
+    } else if (player1_on_tile) {
+        cout << "1";  // Only player 1 on this tile
+    } else if (player2_on_tile) {
+        cout << "2";  // Only player 2 on this tile
+    } else {
+        cout << " ";  // Empty tile
     }
-    else
+    cout << "|" << RESET;
+}
+
+
+void Board::displayTrack(int player_index)
     {
-    cout << color << "| |" << RESET;
-    }
-    }
-    void Board::displayTrack(int player_index)
-    {
+    // cout << getBoardType(player_index) << endl;
     for (int i = 0; i < _BOARD_SIZE; i++)
     {
-    displayTile(player_index, i);
+    displayTile(player_index, i, _player_lane[player_index]);
     }
     cout << endl;
     }
+
     void Board::displayBoard()
     {
     for (int i = 0; i < 2; i++)
@@ -156,19 +169,39 @@ void Board::displayTile(int player_index, int pos)
     }
 }
 
-// bool Board::movePlayer(int player_index){
-//     //Increment player position
-//     _player_position[player_index]++;
-//     if (_player_position[player_index] == _BOARD_SIZE - 1)
-//     {
-//          // Player reached last tile
-//          return true;
-//     }
-//          return false;
-//     }
-// int Board::getPlayerPosition(int player_index) const{
-//     if (player_index >= 0 && player_index <= _player_count){
-//          return _player_position[player_index];
-//     }
-//     return -1;
-// }
+bool Board::movePlayer(int player_index, int moveamount) {
+    int currentPosition = _player_position[player_index];
+    currentPosition += moveamount; // Move the player by the spinner value
+    _player_position[player_index] = currentPosition;
+
+    // Add a check for a winning condition
+    if (currentPosition >= _BOARD_SIZE - 1) {
+        return true; // Player has won
+    }
+
+    return false;
+}
+    
+    
+int Board::getPlayerPosition(int player_index) const{
+    if (player_index >= 0 && player_index <= _player_count){
+         return _player_position[player_index];
+    } 
+    return -1;
+}
+
+void Board::setPlayer_count(int newplayerCount) {
+    _player_count = newplayerCount;
+}
+
+void Board::setPlayerLane(int playerlane, int player_index) {
+    _player_lane[player_index] = playerlane;
+}
+
+int Board::getPlayerLane(int player_index) {
+    return _player_lane[player_index];
+}
+
+void Board::setPlayerPosition(int player_index, int moveAmt) {
+    _player_position[player_index] += moveAmt;
+}

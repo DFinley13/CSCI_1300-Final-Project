@@ -1,4 +1,3 @@
-//Anthony and David
 #include "Player.h"
 #include <iostream>
 
@@ -111,7 +110,8 @@ void Player::setAdvisor(string adName, string adAbility){
     advisorAbility = adAbility;
 }
 
-void Player::choosePath(int pathChoice) {
+int Player::choosePath() {
+    int pathChoice;
     // Keep asking until the player chooses a valid path
     do {
         cout << "Choose your path:" << endl;
@@ -143,6 +143,7 @@ void Player::choosePath(int pathChoice) {
     else{
             cout << "Invalid choice, please select 1 or 2." << endl;
     }
+    return pathChoice;
 }
 void Player::traincub(int strength, int stamina, int wisdom){
     addStrength(strength);
@@ -163,4 +164,12 @@ void Player::printStats(){
     cout << "Stamina: " << _stamina << endl;
     cout << "Wisdom: " << _wisdom << endl;
     cout << "Pride Points: " << _pride_points << endl;
+}
+
+string Player::getAdvisor() {
+    return advisorName;
+}
+
+string Player::getAdvisorAbility() {
+    return advisorAbility;
 }

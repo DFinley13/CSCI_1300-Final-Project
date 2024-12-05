@@ -1,4 +1,3 @@
-//Anthony and David
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -28,6 +27,8 @@ class Player{
     int getWisdom();
     int getPridePoints();
     int getAge();
+    string getAdvisor();
+    string getAdvisorAbility();
 
     //Setters
     void setName(string name);
@@ -44,9 +45,10 @@ class Player{
     void addPridePoints(int pride_points);
     void addAge(int age);
 
+    //Anthony
     void setAdvisor(string name, string ability);
     void traincub(int strength, int stamina, int wisdom);
-    void choosePath(int pathChoice);
+    int choosePath();
     void toPrideLands(); 
     void printStats();
 

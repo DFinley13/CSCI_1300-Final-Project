@@ -1,15 +1,17 @@
-//Anthony and David
 #include "Game.h"
 #include "Board.h"
-#include "Player.h"
+#include "player.h"
 #include <cstdlib>
 #include <ctime>
 using namespace std;
 
-
+//Anthony
 int main() {
+    Tile _tile;
     srand(time(0)); // Seed random number generator
     Game game;
+    Board _board;
+
 
     // Load characters from the file
     game.loadCharacters("characters.txt");
@@ -27,8 +29,16 @@ int main() {
     // Players select their characters
     game.selectCharacters(playerCount);
 
-    // Start the game
     game.startGame();
 
+    
+
+    bool playerWon = false;
+    while (playerWon == false)
+    {
+        playerWon = game.mainMenu();
+    }
+    
+    
     return 0;
 }
