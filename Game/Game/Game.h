@@ -1,7 +1,8 @@
+//Anthony and David
 #ifndef GAME_H
 #define Game_H
 
-#include "Player.h"
+#include "player.h"
 #include <vector>
 
 using namespace std;
@@ -18,6 +19,7 @@ class Game{
     void selectCharacters(int playerCount);
     void selectAdvisor();
     void startGame();
+    int spinner();
 
 };
 

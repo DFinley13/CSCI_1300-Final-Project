@@ -1,4 +1,5 @@
-#include "Game.h"
+//Anthony and David
+#include "game.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -136,4 +137,13 @@ void Game::startGame() {
         _players[i].printStats();
         cout << endl;
     }
+}
+
+int Game::spinner() {
+    srand(time(0));
+    int spinner_out_put = 0;
+
+    spinner_out_put = rand() % 8;
+
+    return spinner_out_put;
 }
