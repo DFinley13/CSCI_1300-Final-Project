@@ -108,31 +108,64 @@ void Game::selectAdvisor(int player_index){
     vector<string> advisorAbilities = {"Invisibility", "Night Vision", "Energy Manipulation", "Weather Control", "Super Speed"};
 
     int l = advisorNames.size();
-    // The player to select an advisor
-        cout << "Player " << player_index + 1 << ", choose an advisor:\n";
-        for (int j = 0; j < l; ++j) {
-            cout << j + 1 << ". " << advisorNames[j] << " - " << advisorAbilities[j] << endl;
-        }
+    // The player selects an advisor
+    cout << "Player " << player_index + 1 << ", choose an advisor:\n";
+    for (int j = 0; j < l; ++j) {
+        cout << j + 1 << ". " << advisorNames[j] << " - " << advisorAbilities[j] << endl;
+    }
 
-        int advisorChoice;
-        cin >> advisorChoice;
+    int advisorChoice;
+    cin >> advisorChoice;
 
-        // Assign the chosen advisor to the player
-        if (advisorChoice >= 1 && advisorChoice <= l) {
-            _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
-        } else {
-            cout << "Invalid choice. No advisor selected.\n";
-        }
+    // Assign the chosen advisor to the player
+    if (advisorChoice >= 1 && advisorChoice <= l) {
+        _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
+    } else {
+        cout << "Invalid choice. No advisor selected.\n";
+    }
 
-        char userInput;
-        cout << "You have choosen " << _players[player_index].getAdvisor() << " with the abillity " << _players[player_index].getAdvisorAbility() << "\n";
-        cout << "Is this correct? Enter 'N' if incorrect, 'Y if correct \n";
-        cin >> userInput;
-            if (userInput == 'N' || userInput == 'n')
-            {
-              selectAdvisor(player_index);  
-            } 
-        cout << endl;
+    char userInput;
+    cout << "You have chosen " << _players[player_index].getAdvisor() << " with the ability " << _players[player_index].getAdvisorAbility() << "\n";
+    cout << "Is this correct? Enter 'N' if incorrect, 'Y' if correct.\n";
+    cin >> userInput;
+    if (userInput == 'N' || userInput == 'n') {
+        selectAdvisor(player_index);
+    }
+    cout << endl;
+
+    // Apply the advisor ability effects
+    applyAdvisorEffect(player_index);
+}
+
+void Game::applyAdvisorEffect(int player_index) {
+    string ability = _players[player_index].getAdvisorAbility();
+
+    if (ability == "Invisibility") {
+        // Rafiki: Invisibility - Hide position, no effect on stats, just a narrative effect
+        cout << "You are now invisible, your position is hidden from others for this turn.\n";
+    }
+    else if (ability == "Night Vision") {
+        // Nala: Night Vision - Increase Wisdom
+        _players[player_index].addWisdom(100); // Example: Boost wisdom by 100
+        cout << "Night Vision: Wisdom increased by 100!\n";
+    }
+    else if (ability == "Energy Manipulation") {
+        // Sarabi: Energy Manipulation - Boost Stamina
+        _players[player_index].addStamina(100); // Example: Boost stamina by 100
+        cout << "Energy Manipulation: Stamina increased by 100!\n";
+    }
+    else if (ability == "Weather Control") {
+        // Zazu: Weather Control - Boost Strength
+        _players[player_index].addStrength(100); // Example: Boost strength by 100
+        cout << "Weather Control: Strength increased by 100!\n";
+    }
+    else if (ability == "Super Speed") {
+        // Sarafina: Super Speed - Allow extra movement
+        cout << "Super Speed: You can move an extra 2 spaces this turn!\n";
+    }
+    else {
+        cout << "Unknown advisor ability!\n";
+    }
 }
     
 
