@@ -1,4 +1,7 @@
-#include "Game.h"
+//Anthony
+#include "game.h"
+#include "Board.h"
+#include "player.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -59,6 +62,8 @@ void Game::selectCharacters(int playerCount) {
         cin >> playerCount;
     }
 
+    _board.setPlayer_count(playerCount);
+
     // Display available characters
     cout << "Available Characters:\n";
     for (int i = 0; i < n; ++i) {
@@ -85,11 +90,14 @@ void Game::selectCharacters(int playerCount) {
 
         // Apply path effects
         int playerPath = _players[i].choosePath();
-        _board.setPlayerLane(playerPath, i);
         if (playerPath == 1)
         {
+            _board.setPlayerLane(playerPath, i);
             selectAdvisor(i);
+        } else {
+            _board.setPlayerLane(playerPath, i);
         }
+
     }
 
     // Confirm selections
@@ -99,6 +107,7 @@ void Game::selectCharacters(int playerCount) {
         cout << "Player " << i + 1 << ":\n";
         _players[i].printStats();
         cout << endl;
+        _board.setPlayerPosition(i, 0);
     }
 }
 
@@ -114,16 +123,21 @@ void Game::selectAdvisor(int player_index){
         cout << j + 1 << ". " << advisorNames[j] << " - " << advisorAbilities[j] << endl;
     }
 
-    int advisorChoice;
-    cin >> advisorChoice;
+        int advisorChoice;
+        cin >> advisorChoice;
 
+        // Assign the chosen advisor to the player
+        if (advisorChoice >= 1 && advisorChoice <= l) {
+            _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
+        } else {
+            cout << "Invalid choice. No advisor selected.\n";
+        }
     // Assign the chosen advisor to the player
     if (advisorChoice >= 1 && advisorChoice <= l) {
         _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
     } else {
         cout << "Invalid choice. No advisor selected.\n";
     }
-
     char userInput;
     cout << "You have chosen " << _players[player_index].getAdvisor() << " with the ability " << _players[player_index].getAdvisorAbility() << "\n";
     cout << "Is this correct? Enter 'N' if incorrect, 'Y' if correct.\n";
@@ -132,14 +146,12 @@ void Game::selectAdvisor(int player_index){
         selectAdvisor(player_index);
     }
     cout << endl;
-
     // Apply the advisor ability effects
     applyAdvisorEffect(player_index);
 }
 
 void Game::applyAdvisorEffect(int player_index) {
     string ability = _players[player_index].getAdvisorAbility();
-
     if (ability == "Invisibility") {
         // Rafiki: Invisibility - Hide position, no effect on stats, just a narrative effect
         cout << "You are now invisible, your position is hidden from others for this turn.\n";
@@ -162,6 +174,16 @@ void Game::applyAdvisorEffect(int player_index) {
     else if (ability == "Super Speed") {
         // Sarafina: Super Speed - Allow extra movement
         cout << "Super Speed: You can move an extra 2 spaces this turn!\n";
+
+        if (_board.getPlayerPosition(player_index) > 0 && _board.getPlayerPosition(player_index) < 51)
+        {  
+            int moveamt = randomGenerator(1, 7);
+            _board.movePlayer(player_index, moveamt);
+            _board.displayTrack(player_index);
+            moveamt = randomGenerator(1, 7);
+            _board.movePlayer(player_index, moveamt);
+            _board.displayTrack(player_index);
+        }
     }
     else {
         cout << "Unknown advisor ability!\n";
@@ -202,18 +224,28 @@ int Game::amountOfPlayers() {
     return _players.size();
 }
 
+//The menu that displays the actions the players can do on there turn
 bool Game::mainMenu() {
-    // For each players turn
+ // For each players turn
     int playersize;
-    if (_players.size() > 2)
-    {
-        playersize = 2;
-    } else {
-        playersize = 2; 
-    }
+    playersize = _characters.size();
     
+   
+
     for (int i = 0; i < playersize; i++)
     {
+
+        if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51, _board.getPlayerPosition(2) == 51, _board.getPlayerPosition(3) == 51, _board.getPlayerPosition(4) == 51)
+        {
+            return true;
+        }
+        
+
+        if (_board.getPlayerPosition(i) >= 51)
+        {
+            continue;
+        }
+
         //To continue the while loop
        bool validchoice = false;
     while (validchoice == false)
@@ -290,16 +322,19 @@ bool Game::mainMenu() {
     } else if (menuChoice == 5) {
             // Move player forward
             int moveAmount = spinner();
-            bool won = false;
 
             // Call movePlayer with the current player index
-                won = _board.movePlayer(i, moveAmount); // Move the player i
-                if (won == true) {
-                    cout << "Player " << i + 1 << " has won!!!" << endl;
-                    return won;
-                }
-            cout << "Player " << i + 1 << " moved forward: " << moveAmount << " spaces." << endl;
-            _board.displayTrack(_board.getPlayerLane(i) - 1); // Display the updated track
+            _board.movePlayer(i, moveAmount); // Move the player i
+
+                cout << "Player " << i + 1 << " moved forward: " << moveAmount << " spaces." << endl;
+                _board.displayTrack(_board.getPlayerLane(i) - 1); // Display the updated track
+                playerLastMove[i] = moveAmount;
+
+                string color = _board.currentTileColor(_board.getPlayerLane(i) - 1, _board.getPlayerPosition(i));
+                tileAffect(color, i);
+
+
+
             validchoice = true;
     } else {
         cout << "Invalid Choice" << endl;
@@ -310,10 +345,24 @@ bool Game::mainMenu() {
     return false;
 }
 
+//What the tiles do
 void Game::tileAffect(string tilesColor, int player_index) {
-    if (tilesColor == "G")
-    {
-        //Create the random events fucntion
+    Tile _tile;
+   if (tilesColor == "G")
+   {
+       int random = rand() % 100 + 1;
+
+       if (random <= 50)
+       {
+           cout << "Nothing happens. Take a rest." << endl;
+        } else if (random > 50) {
+            cout << "Green" << endl;
+            // randomEvent(player_index);
+       } else {
+           cout << "ERROR in green tile affect" << endl;
+           return;
+       }
+       
     } else if (tilesColor == "B") 
     {
         cout << "You’ve found a peaceful oasis! \n";
@@ -327,10 +376,26 @@ void Game::tileAffect(string tilesColor, int player_index) {
 
         _players[player_index].addWisdom(200);
          cout << "You gained +200 Wisdom" << endl;
+
+
+        char ready;
+        cout << "Ready to move? Press 'Y' to continue" << endl;
+        cin >> ready;
+        if (ready == 'y' || ready == 'Y')
+        {
+            int moveamount = randomGenerator(1,7);
+            _board.movePlayer(player_index, moveamount);    
+            cout << "You moved " << moveamount << " Spaces" << endl;
+            _board.displayTrack(player_index);
+            string color = _board.currentTileColor(_board.getPlayerLane(player_index) - 1, _board.getPlayerPosition(player_index));
+            tileAffect(color, player_index);
+        }
+        
+
     } 
     else if (tilesColor == "P") 
     {
-        cout << "Welcome to the land of enrichment - when landing on this tile, your Stamina, Strength, and Wisdom \n";
+        cout << "Player " << player_index + 1 << " Welcome to the land of enrichment - when landing on this tile, your Stamina, Strength, and Wisdom \n";
         cout << "Points increase by 300, and you get to choose an advisor from the available list of advisors. \n";
         cout << "If you already have an advisor, you can switch your advisor out for a different one from the list or keep your original advisor. \n";
         cout << "Don’t forget - an advisor can protect you from random events that negatively impact your Pride Points." << endl;
@@ -343,21 +408,20 @@ void Game::tileAffect(string tilesColor, int player_index) {
         string currentAdvisorAbillity = _players[player_index].getAdvisorAbility();
         if (currentAdvisor == "" && currentAdvisorAbillity == "")
         {
+            selectAdvisor(player_index);
+        } else {
             char change;
             cout << "Would you like to from chagne Advisors?" << endl;
             cout << "You currently have " << currentAdvisor << " with the abillity " << currentAdvisorAbillity << endl;
             cout << "Press Y for yes and N for no" << endl;
             cin >> change;
-            if (change == 'y' || change == 'y')
+            if (change == 'y' || change == 'Y')
             {
                 cout << "Great!" << endl;
                 selectAdvisor(player_index);
             } else {
                 cout << "Good choice! " << currentAdvisor << " will treat you well" << endl;
             }
-
-        } else {
-            selectAdvisor(player_index);
         }
     }
     else if (tilesColor == "R") 
@@ -369,7 +433,12 @@ void Game::tileAffect(string tilesColor, int player_index) {
         _players[player_index].addStrength(-100);
         _players[player_index].addWisdom(-100);
 
-        _board.setPlayerPosition(player_index, -10);
+        if (_board.getPlayerPosition(player_index) - 10 < 0){
+            _board.setPlayerPosition(player_index, 0);
+        } else {
+            _board.movePlayer(player_index, -10);
+        }
+        _board.displayTrack(player_index);
     } 
     else if (tilesColor == "N") 
     {
@@ -377,16 +446,20 @@ void Game::tileAffect(string tilesColor, int player_index) {
         cout << "This returns the player to their previous position. \n"; 
         cout << "In addition, the player’s Stamina Points decrease by 300 Points" << endl;
 
-        //add the move back feature
+
+        _players[player_index].addStamina(-300);
+        _board.movePlayer(player_index, -playerLastMove[player_index]);
+        _board.displayTrack(player_index);
 
     } 
-    else if (tilesColor == "P") 
+    else if (tilesColor == "U") 
     {
         bool gotRight;
         cout << "Time for a test of wits! Land here, and you’ll face a riddle randomly pulled. \n";
         cout << "Answer correctly, and you’ll earn a boost of 500 Points to your Wisdom Trait—your cleverness pays off!" << endl;
-        Tile _tile;
-        gotRight = _tile.randomeRiddle();
+        cout << "---------------------------------" << endl;
+
+        gotRight = _tile.randomRiddle();
 
         if (gotRight == true)
         {
@@ -397,18 +470,165 @@ void Game::tileAffect(string tilesColor, int player_index) {
         }
         
 
-    } else {
+    } 
+    else if (tilesColor == "O") {
+        cout << "Congratulations player " << player_index + 1 << ", you have finished your jounery through the Pride Lands!" << endl;
+        cout << "Please wait for all other players to finish" << endl;
+    }
+    else
+    {
         cout << "ERROR!!!" << endl;
         return;
     }
     
 }
 
-int Game::spinner() {
-    srand(time(0));
-    int spinner_out_put = 0;
+//Gives a random number
+int Game::randomGenerator(int min, int max)
+{
+    return (rand() % (max - min + 1) + min);
+}
 
-    spinner_out_put = rand() % 8;
+//The random events when a player lands on the green tiles
+void Game::randomEvent(int player_index) {
+    Player _player;
+    vector<string> descriptions;
+    vector<int> paths;
+    vector<int> toAdvisors;
+    vector<int> pridePointChanges;
+    int idx = 0;
 
-    return spinner_out_put;
+    ifstream file("random_events.txt");
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << "random_events.txt" << endl;
+        return;
+    }
+
+    string line, firstline;
+    getline(file, firstline); // Skip the header line
+
+    // Parse the file
+    while (getline(file, line)) {
+        string description, path, toAdvisor, pridePointChange;
+        stringstream stream(line);
+
+        getline(stream, description, '|');
+        getline(stream, path, '|');
+        getline(stream, toAdvisor, '|');
+        getline(stream, pridePointChange, '|');
+
+        descriptions.push_back(description);
+        paths.push_back(stoi(path));
+        toAdvisors.push_back(stoi(toAdvisor));
+        pridePointChanges.push_back(stoi(pridePointChange));
+        idx++;
+    }
+
+    // Create a 2D vector to store events for each path and advisor combination
+    vector<vector<vector<int>>> eventGroups(2, vector<vector<int>>(6)); 
+    // `2` paths (0 = club, 1 = pride), `6` advisors (0 = no advisor, 1-5 = others)
+
+    for (int i = 0; i < idx; ++i) {
+        int path = paths[i];
+        int advisor = toAdvisors[i];
+        if (path >= 0 && path < 2 && advisor >= 0 && advisor < 6) {
+            eventGroups[path][advisor].push_back(i);
+        } else {
+            cerr << "Error: Invalid path or advisor value in random events file." << endl;
+            return;
+        }
+    }
+
+    // Determine the player's path and advisor
+    int playerLane = _board.getPlayerLane(player_index);
+    string playerAdvisor = _players[player_index].getAdvisor();
+
+    // Map advisor names to numerical indices
+    int advisorIndex = 0;
+    if (playerAdvisor == "Rafiki") advisorIndex = 1;
+    else if (playerAdvisor == "Nala") advisorIndex = 2;
+    else if (playerAdvisor == "Sarabi") advisorIndex = 3;
+    else if (playerAdvisor == "Zazu") advisorIndex = 4;
+    else if (playerAdvisor == "Sarafina") advisorIndex = 5;
+
+    // Check if events exist for the player's group
+    if (!eventGroups[playerLane][advisorIndex].empty()) {
+        const auto& events = eventGroups[playerLane][advisorIndex];
+        int randomIndex = randomGenerator(0, events.size());
+        int selectedEvent = events[randomIndex];
+
+        // Output the event and update pride points
+        cout << descriptions[selectedEvent] << endl;
+        _players[player_index].addPridePoints(pridePointChanges[selectedEvent]);
+        cout << "Pride Points: " << pridePointChanges[selectedEvent] << endl;
+    } else {
+        cout << "No events available for the player's path and advisor." << endl;
+    }
+}
+
+//The end win screen 
+void Game::winscreen() {
+    cout << "-----------------------------" << endl;
+    cout << "Congratulations players you have all completed your journey!" << endl; 
+
+    const int maxPlayers = 5; // Assuming max 5 players
+    int totalPridepoints[maxPlayers] = {0, 0, 0, 0, 0};
+    int playerIndices[maxPlayers] = {0, 1, 2, 3, 4};
+
+    int totalPlayers = amountOfPlayers();
+    for (int i = 0; i < totalPlayers; i++)
+    {
+        int totalPoints = _players[i].getPridePoints();
+        int testStamina = _players[i].getStamina();
+        int testStrength = _players[i].getStrength();
+        int testWisdom = _players[i].getWisdom();
+                while (testStamina > 100)
+                {
+                    testStamina -= 100;
+                    totalPoints += 1000;
+                }
+                while (testStrength > 100) {
+                    testStrength -= 100;
+                    totalPoints += 1000;
+                } 
+                while (testWisdom > 100) {
+                    testWisdom -= 100;
+                    totalPoints += 1000;
+                }
+        totalPridepoints[i] = totalPoints;
+    }
+
+    int n = amountOfPlayers();
+
+
+    //Bubble sort
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (totalPridepoints[j] < totalPridepoints[j + 1]) // Reverse the comparison
+            {
+                cout << "swapping numbers: " << j << " and " << j + 1 << endl;
+                int temp = totalPridepoints[j + 1];
+                totalPridepoints[j + 1] = totalPridepoints[j];
+                totalPridepoints[j] = temp;
+
+                int tempIndex = playerIndices[j + 1];
+                playerIndices[j + 1] = playerIndices[j];
+                playerIndices[j] = tempIndex;
+            }
+
+            
+        }
+        
+    }
+    
+    cout << "The pride points leader board is: " << endl;
+
+    for (int i = 0; i < n; i++)
+    {
+       cout << "Player: " << playerIndices[i] + 1 << ": " <<totalPridepoints[i] <<  endl;
+    }
+    
+
 }

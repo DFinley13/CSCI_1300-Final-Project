@@ -1,4 +1,3 @@
-//Anthony and David
 #ifndef TILE_H
 #define TILE_H
 #include <iostream>
@@ -19,7 +18,7 @@ class Tile{
 
     void randomizeTileType(bool isCubTraining, bool isFirstHalf);
 
-    bool randomeRiddle();
+    bool randomRiddle();
 
 
     private:

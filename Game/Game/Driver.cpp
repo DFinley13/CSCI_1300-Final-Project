@@ -1,4 +1,5 @@
-#include "Game.h"
+
+#include "game.h"
 #include "Board.h"
 #include "player.h"
 #include <cstdlib>
@@ -11,7 +12,6 @@ int main() {
     srand(time(0)); // Seed random number generator
     Game game;
     Board _board;
-
 
     // Load characters from the file
     game.loadCharacters("characters.txt");
@@ -26,18 +26,19 @@ int main() {
         return 1;
     }
 
-    // Players select their characters
+    //Players select their characters
     game.selectCharacters(playerCount);
 
-    game.startGame();
 
-    
+    game.startGame();    
 
-    bool playerWon = false;
-    while (playerWon == false)
+    bool playerFinished = false;
+    while (playerFinished == false)
     {
-        playerWon = game.mainMenu();
+        playerFinished = game.mainMenu();
     }
+
+    game.winscreen();
     
     
     return 0;

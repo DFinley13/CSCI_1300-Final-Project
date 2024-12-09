@@ -1,5 +1,6 @@
-//Anthony and David
 #include "Tile.h"
+#include "player.h"
+#include "game.h"
 #include <cstdlib>
 #include <ctime>
 using namespace std;
@@ -80,7 +81,7 @@ int randomGenerator(int min, int max)
 }
 
 
-bool Tile::randomeRiddle() {
+bool Tile::randomRiddle() {
     vector<string> riddles;
     vector<string> answers;
     int idx = 0;
