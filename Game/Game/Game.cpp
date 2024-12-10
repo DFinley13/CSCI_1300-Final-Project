@@ -187,10 +187,10 @@ void Game::applyAdvisorEffect(int player_index) {
         {  
             int moveamt = randomGenerator(1, 7);
             _board.movePlayer(player_index, moveamt);
-            _board.displayTrack(player_index);
+            _board.displayTrack(_board.getPlayerLane(player_index) - 1);
             moveamt = randomGenerator(1, 7);
             _board.movePlayer(player_index, moveamt);
-            _board.displayTrack(player_index);
+            _board.displayTrack(_board.getPlayerLane(player_index) - 1);
         }
     }
     else {
@@ -241,11 +241,13 @@ bool Game::mainMenu() {
 
     for (int i = 0; i < playersize; i++)
     {
-
-        if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51 && _board.getPlayerPosition(2) == 51 && _board.getPlayerPosition(3) == 51 && _board.getPlayerPosition(4) == 51)
-        {
+        for (int j = 0; j < _board.getPlayerCount(); j++) {
+            if (_board.getPlayerPosition(j) != 51) {
+                break; // Exit the function early if any player's position is not 51
+            }
             return true;
         }
+        
         
 
         if (_board.getPlayerPosition(i) >= 51)
@@ -391,7 +393,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
             int moveamount = randomGenerator(1,7);
             _board.movePlayer(player_index, moveamount);    
             cout << "You moved " << moveamount << " Spaces" << endl;
-            _board.displayTrack(player_index);
+            _board.displayTrack(_board.getPlayerLane(player_index) - 1);
             string color = _board.currentTileColor(_board.getPlayerLane(player_index) - 1, _board.getPlayerPosition(player_index));
             tileAffect(color, player_index);
         } else {
@@ -445,7 +447,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
         } else {
             _board.movePlayer(player_index, -10);
         }
-        _board.displayTrack(player_index);
+        _board.displayTrack(_board.getPlayerLane(player_index) - 1);
     } 
     else if (tilesColor == "N") 
     {
@@ -456,7 +458,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
 
         _players[player_index].addStamina(-300);
         _board.movePlayer(player_index, -playerLastMove[player_index]);
-        _board.displayTrack(player_index);
+        _board.displayTrack(_board.getPlayerLane(player_index) - 1);
 
     } 
     else if (tilesColor == "U") 

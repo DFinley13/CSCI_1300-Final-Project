@@ -152,7 +152,12 @@ void Board::displayTrack(int player_index)
         }
     for (int i = 0; i < _BOARD_SIZE; i++)
     {
-    displayTile(_player_lane[player_index] - 1, i, _player_lane[player_index]);
+        if (player_index > 2)
+        {
+            displayTile(_player_lane[player_index] - 1, i, _player_lane[player_index]);
+        } else {
+            displayTile(player_index, i, _player_lane[player_index]);
+        }
     }
     cout << endl;
     }
