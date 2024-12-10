@@ -659,15 +659,26 @@ void Game::winscreen() {
         totalPridepoints[i] = totalPoints;
     }
 
-    // Bubble sort with vectors
-    for (int i = 0; i < totalPlayers - 1; i++) {
-        for (int j = 0; j < totalPlayers - i - 1; j++) {
-            if (totalPridepoints[j] < totalPridepoints[j + 1]) { // Reverse the comparison
+    //Bubble Sort
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (totalPridepoints[j] < totalPridepoints[j + 1]) // Reverse the comparison
+            {
+                cout << "swapping numbers: " << j << " and " << j + 1 << endl;
+                int temp = totalPridepoints[j + 1];
+                totalPridepoints[j + 1] = totalPridepoints[j];
+                totalPridepoints[j] = temp;
 
-                swap(totalPridepoints[j], totalPridepoints[j + 1]);
-                swap(playerIndices[j], playerIndices[j + 1]);
+                int tempIndex = playerIndices[j + 1];
+                playerIndices[j + 1] = playerIndices[j];
+                playerIndices[j] = tempIndex;
             }
+
+            
         }
+        
     }
 
     outFile << "The pride points leader board is: " << endl;
