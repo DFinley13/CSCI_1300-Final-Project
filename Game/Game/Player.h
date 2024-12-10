@@ -1,3 +1,4 @@
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -51,7 +52,6 @@ class Player{
     int choosePath();
     void toPrideLands(); 
     void printStats();
-
 };
 
 
