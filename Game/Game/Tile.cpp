@@ -148,7 +148,7 @@ bool Tile::playRockPaperScissors() {
 }
 
 void Tile::handleEvent(int player_index, Player player, const string playerAdvisor, bool isCubTraining) {
-    if (tile_type == "Graveyard") {
+    if (event_trigger == "Graveyard" && tile_type == "Graveyard") {
         cout << "You encounter a Graveyard event!" << endl;
         // If advisor is Sarabi and player is in cub training, skip this event
         if (isCubTraining && playerAdvisor == "Sarabi") {
@@ -158,7 +158,7 @@ void Tile::handleEvent(int player_index, Player player, const string playerAdvis
             cout << "You lose some pride points in the Graveyard!" << endl;
             player.addPridePoints(-200); // Subtract 200 pride points
         }
-    } else if (tile_type == "Oasis") {
+    } else if (event_trigger == "Oasis" && tile_type == "Oasis") {
         cout << "You encounter an Oasis event!" << endl;
         // If advisor is Rafiki, gain pride points
         if (playerAdvisor == "Rafiki") {
@@ -168,7 +168,7 @@ void Tile::handleEvent(int player_index, Player player, const string playerAdvis
             cout << "You gain a small bonus from the Oasis." << endl;
             player.addPridePoints(100); // Add 100 pride points
         }
-    } else if (tile_type == "Challenge") {
+    } else if (event_trigger == "Challenge" && tile_type == "Challenge") {
         cout << "You encounter a Challenge event!" << endl;
         // Play Rock Paper Scissors to regain turn
         if (playRockPaperScissors()) {
@@ -178,7 +178,7 @@ void Tile::handleEvent(int player_index, Player player, const string playerAdvis
         } else {
             cout << "You lost! No turn for you this time." << endl;
         }
-    } else if (tile_type == "Hyena") {
+    } else if (event_trigger == "Hyena" && tile_type == "Hyena") {
         cout << "You encounter a Hyena event!" << endl;
         // Penalty for Hyena encounter
         cout << "The Hyenas cause you to lose pride!" << endl;
