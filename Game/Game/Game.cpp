@@ -1,3 +1,4 @@
+
 //Anthony
 #include "game.h"
 #include "Board.h"
@@ -56,6 +57,8 @@ void Game::loadCharacters(const string filename) {
 
 void Game::selectCharacters(int playerCount) {
     int n = _characters.size();
+
+    // Ensure valid player count
     while (playerCount < 2 || playerCount > n) {
         cerr << "Error: Invalid number of players. You must select between 2 and " << n << " players.\n";
         cout << "Enter the number of players: ";
@@ -79,6 +82,7 @@ void Game::selectCharacters(int playerCount) {
         int choice;
         cin >> choice;
 
+        // Ensure the choice is valid and the character isn't already chosen
         while (choice < 1 || choice > n || selected[choice - 1]) {
             cerr << "Invalid choice or character already chosen. Try again: ";
             cin >> choice;
@@ -90,14 +94,10 @@ void Game::selectCharacters(int playerCount) {
 
         // Apply path effects
         int playerPath = _players[i].choosePath();
-        if (playerPath == 1)
-        {
-            _board.setPlayerLane(playerPath, i);
-            selectAdvisor(i);
-        } else {
-            _board.setPlayerLane(playerPath, i);
-        }
+        _board.setPlayerLane(playerPath, i);
 
+        // Call selectAdvisor for each player after they choose their path
+        selectAdvisor(i);
     }
 
     // Confirm selections
@@ -111,44 +111,49 @@ void Game::selectCharacters(int playerCount) {
     }
 }
 
-void Game::selectAdvisor(int player_index){
+void Game::selectAdvisor(int player_index) {
     // Advisor options
     vector<string> advisorNames = {"Rafiki", "Nala", "Sarabi", "Zazu", "Sarafina"};
     vector<string> advisorAbilities = {"Invisibility", "Night Vision", "Energy Manipulation", "Weather Control", "Super Speed"};
 
     int l = advisorNames.size();
+    bool validChoice = false;  // Flag to control the loop
+
     // The player selects an advisor
-    cout << "Player " << player_index + 1 << ", choose an advisor:\n";
-    for (int j = 0; j < l; ++j) {
-        cout << j + 1 << ". " << advisorNames[j] << " - " << advisorAbilities[j] << endl;
-    }
+    while (!validChoice) {
+        cout << "Player " << player_index + 1 << ", choose an advisor:\n";
+        for (int j = 0; j < l; ++j) {
+            cout << j + 1 << ". " << advisorNames[j] << " - " << advisorAbilities[j] << endl;
+        }
 
         int advisorChoice;
         cin >> advisorChoice;
 
-        // Assign the chosen advisor to the player
+        // Check if the choice is valid
         if (advisorChoice >= 1 && advisorChoice <= l) {
+            // Assign the chosen advisor to the player
             _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
+            
+            // Ask for confirmation
+            char userInput;
+            cout << "You have chosen " << _players[player_index].getAdvisor() << " with the ability " << _players[player_index].getAdvisorAbility() << "\n";
+            cout << "Is this correct? Enter 'N' if incorrect, 'Y' if correct.\n";
+            cin >> userInput;
+
+            if (userInput == 'Y' || userInput == 'y') {
+                validChoice = true;  // Exit the loop if confirmed
+            } else {
+                cout << "Please choose again.\n";  // Allow retrying if incorrect
+            }
         } else {
-            cout << "Invalid choice. No advisor selected.\n";
+            cout << "Invalid choice. Please choose a valid advisor number.\n";
         }
-    // Assign the chosen advisor to the player
-    if (advisorChoice >= 1 && advisorChoice <= l) {
-        _players[player_index].setAdvisor(advisorNames[advisorChoice - 1], advisorAbilities[advisorChoice - 1]);
-    } else {
-        cout << "Invalid choice. No advisor selected.\n";
     }
-    char userInput;
-    cout << "You have chosen " << _players[player_index].getAdvisor() << " with the ability " << _players[player_index].getAdvisorAbility() << "\n";
-    cout << "Is this correct? Enter 'N' if incorrect, 'Y' if correct.\n";
-    cin >> userInput;
-    if (userInput == 'N' || userInput == 'n') {
-        selectAdvisor(player_index);
-    }
-    cout << endl;
-    // Apply the advisor ability effects
+
+    // Apply the advisor's effect (this is just a placeholder function)
     applyAdvisorEffect(player_index);
 }
+
 
 void Game::applyAdvisorEffect(int player_index) {
     string ability = _players[player_index].getAdvisorAbility();
@@ -195,7 +200,6 @@ void Game::startGame() {
     cout << "Starting the game...\n";
 
     int k = _players.size();
-    // Placeholder
     for (int i = 0; i < k; ++i) {
         cout << "Player " << i + 1 << " stats:\n";
         _players[i].printStats();
@@ -228,17 +232,17 @@ int Game::amountOfPlayers() {
 bool Game::mainMenu() {
  // For each players turn
     int playersize;
-    playersize = _characters.size();
+    playersize = _players.size();
     
    
 
     for (int i = 0; i < playersize; i++)
     {
 
-        if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51, _board.getPlayerPosition(2) == 51, _board.getPlayerPosition(3) == 51, _board.getPlayerPosition(4) == 51)
-        {
-            return true;
-        }
+        // if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51, _board.getPlayerPosition(2) == 51, _board.getPlayerPosition(3) == 51, _board.getPlayerPosition(4) == 51)
+        // {
+        //     return true;
+        // }
         
 
         if (_board.getPlayerPosition(i) >= 51)
@@ -365,7 +369,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
        
     } else if (tilesColor == "B") 
     {
-        cout << "You’ve found a peaceful oasis! \n";
+        cout << "You found a peaceful oasis! \n";
         cout << "You get a extra turn to move forward!" << endl; 
 
         _players[player_index].addStamina(200);
@@ -454,29 +458,40 @@ void Game::tileAffect(string tilesColor, int player_index) {
     } 
     else if (tilesColor == "U") 
     {
-        bool gotRight;
-        cout << "Time for a test of wits! Land here, and you’ll face a riddle randomly pulled. \n";
-        cout << "Answer correctly, and you’ll earn a boost of 500 Points to your Wisdom Trait—your cleverness pays off!" << endl;
-        cout << "---------------------------------" << endl;
-
-        gotRight = _tile.randomRiddle();
-
-        if (gotRight == true)
-        {
-            cout << "Congratulation!!! You got it right!" << endl;
-            _players[player_index].addWisdom(500);
-        } else {
-            cout << "Unlucky. Hope you get it next time!" << endl;
-        }
+        cout << "Time for a test of wits! Land here, and you face a Rock, Paper, Scissors challenge!\n";
+        cout << "Choose your move:\n";
+        cout << "1. Rock\n2. Paper\n3. Scissors\n";
         
+        int playerMove;
+        cin >> playerMove;
 
+        while (playerMove < 1 || playerMove > 3) {
+            cout << "Invalid choice. Please choose 1 (Rock), 2 (Paper), or 3 (Scissors): ";
+            cin >> playerMove;
+        }
+
+        // Computer randomly selects a move
+        srand(time(0));
+        int computerMove = rand() % 3 + 1;
+        string moves[] = {"Rock", "Paper", "Scissors"};
+
+        cout << "You chose: " << moves[playerMove - 1] << endl;
+        cout << "The computer chose: " << moves[computerMove - 1] << endl;
+
+        // Determine winner
+        if (playerMove == computerMove) {
+            cout << "It's a tie! No changes to your stats.\n";
+        } 
+        else if ((playerMove == 1 && computerMove == 3) || (playerMove == 2 && computerMove == 1) || (playerMove == 3 && computerMove == 2)) {
+            cout << "You win! Your Wisdom increases by 500 points.\n";
+            _players[player_index].addWisdom(500);
+        } 
+        else {
+            cout << "You lose! Your Wisdom decreases by 200 points.\n";
+            _players[player_index].addWisdom(-200);
+        }
     } 
-    else if (tilesColor == "O") {
-        cout << "Congratulations player " << player_index + 1 << ", you have finished your jounery through the Pride Lands!" << endl;
-        cout << "Please wait for all other players to finish" << endl;
-    }
-    else
-    {
+    else {
         cout << "ERROR!!!" << endl;
         return;
     }
