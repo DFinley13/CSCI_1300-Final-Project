@@ -91,13 +91,17 @@ void Game::selectCharacters(int playerCount) {
         // Add the selected character to the players list
         _players.push_back(_characters[choice - 1]);
         selected[choice - 1] = true; // Mark the character as chosen
-
+        
         // Apply path effects
         int playerPath = _players[i].choosePath();
-        _board.setPlayerLane(playerPath, i);
+        if (playerPath == 1)
+        {
+            _board.setPlayerLane(playerPath, i);
+            selectAdvisor(i);
+        } else {
+            _board.setPlayerLane(playerPath, i);
+        }
 
-        // Call selectAdvisor for each player after they choose their path
-        selectAdvisor(i);
     }
 
     // Confirm selections
