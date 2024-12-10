@@ -242,10 +242,10 @@ bool Game::mainMenu() {
     for (int i = 0; i < playersize; i++)
     {
 
-        // if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51, _board.getPlayerPosition(2) == 51, _board.getPlayerPosition(3) == 51, _board.getPlayerPosition(4) == 51)
-        // {
-        //     return true;
-        // }
+        if (_board.getPlayerPosition(0) == 51 && _board.getPlayerPosition(1) == 51 && _board.getPlayerPosition(2) == 51 && _board.getPlayerPosition(3) == 51 && _board.getPlayerPosition(4) == 51)
+        {
+            return true;
+        }
         
 
         if (_board.getPlayerPosition(i) >= 51)
@@ -271,6 +271,7 @@ bool Game::mainMenu() {
     if (menuChoice < 1 || menuChoice > 5)
     {
         cout << "Invalid Choice!" << endl;
+        continue;
     } else if (menuChoice == 1) {
         char choice;
         while (validchoice == false)
@@ -343,10 +344,8 @@ bool Game::mainMenu() {
 
 
             validchoice = true;
-    } else {
-        cout << "Invalid Choice" << endl;
+    } 
     }
-        }
          cout << "----------" << "\n" << endl;
     }
     return false;
@@ -363,8 +362,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
        {
            cout << "Nothing happens. Take a rest." << endl;
         } else if (random > 50) {
-            cout << "Green" << endl;
-            // randomEvent(player_index);
+            randomEvent(player_index);
        } else {
            cout << "ERROR in green tile affect" << endl;
            return;
@@ -396,6 +394,8 @@ void Game::tileAffect(string tilesColor, int player_index) {
             _board.displayTrack(player_index);
             string color = _board.currentTileColor(_board.getPlayerLane(player_index) - 1, _board.getPlayerPosition(player_index));
             tileAffect(color, player_index);
+        } else {
+            
         }
         
 
@@ -494,7 +494,12 @@ void Game::tileAffect(string tilesColor, int player_index) {
             _players[player_index].addWisdom(-200);
         }
     } 
-    else {
+    else if (tilesColor == "O") {
+        cout << "Congratulations player " << player_index + 1 << ", you have finished your jounery through the Pride Lands!" << endl;
+        cout << "Please wait for all other players to finish" << endl;
+    }
+    else
+    {
         winscreen();
         return;
     }
@@ -508,7 +513,7 @@ int Game::randomGenerator(int min, int max)
 }
 
 //The random events when a player lands on the green tiles
-void Game::randomEvent(int player_index) {
+    void Game::randomEvent(int player_index) {
     Player _player;
     vector<string> descriptions;
     vector<int> paths;
@@ -542,45 +547,74 @@ void Game::randomEvent(int player_index) {
         idx++;
     }
 
-    // Create a 2D vector to store events for each path and advisor combination
-    vector<vector<vector<int>>> eventGroups(2, vector<vector<int>>(6)); 
-    // `2` paths (0 = club, 1 = pride), `6` advisors (0 = no advisor, 1-5 = others)
+    vector<int> Cubpaths;
+    vector<int> Pridepaths;
 
-    for (int i = 0; i < idx; ++i) {
-        int path = paths[i];
-        int advisor = toAdvisors[i];
-        if (path >= 0 && path < 2 && advisor >= 0 && advisor < 6) {
-            eventGroups[path][advisor].push_back(i);
+    for (int i = 0; i < idx; i++)
+    {
+        if (paths[i] == 0)
+        {
+            Cubpaths.push_back(i);
         } else {
-            cerr << "Error: Invalid path or advisor value in random events file." << endl;
-            return;
+            Pridepaths.push_back(i);
         }
     }
-
-    // Determine the player's path and advisor
-    int playerLane = _board.getPlayerLane(player_index);
-    string playerAdvisor = _players[player_index].getAdvisor();
-
-    // Map advisor names to numerical indices
-    int advisorIndex = 0;
-    if (playerAdvisor == "Rafiki") advisorIndex = 1;
-    else if (playerAdvisor == "Nala") advisorIndex = 2;
-    else if (playerAdvisor == "Sarabi") advisorIndex = 3;
-    else if (playerAdvisor == "Zazu") advisorIndex = 4;
-    else if (playerAdvisor == "Sarafina") advisorIndex = 5;
-
-    // Check if events exist for the player's group
-    if (!eventGroups[playerLane][advisorIndex].empty()) {
-        const auto& events = eventGroups[playerLane][advisorIndex];
-        int randomIndex = randomGenerator(0, events.size());
-        int selectedEvent = events[randomIndex];
-
-        // Output the event and update pride points
-        cout << descriptions[selectedEvent] << endl;
-        _players[player_index].addPridePoints(pridePointChanges[selectedEvent]);
-        cout << "Pride Points: " << pridePointChanges[selectedEvent] << endl;
+    int randomNum = randomGenerator(0, 25);
+    int playerAdvisor;
+    if (_players[player_index].getAdvisor() == "") {
+        playerAdvisor = 0;
+    } else if (_players[player_index].getAdvisor() == "Rafiki") {
+        playerAdvisor = 1;
+    } else if (_players[player_index].getAdvisor() == "Nala") {
+        playerAdvisor = 2;
+    } else if (_players[player_index].getAdvisor() == "Sarabi") {
+        playerAdvisor = 3;
+    } else if (_players[player_index].getAdvisor() == "Zazu") {
+        playerAdvisor = 4;
+    } else if (_players[player_index].getAdvisor() == "Sarafina") {
+        playerAdvisor = 5;
     } else {
-        cout << "No events available for the player's path and advisor." << endl;
+        cout << "ERROR IN GREEN FUNC" << endl;
+        return;
+    }
+
+    if (_board.getPlayerLane(player_index) == 0)
+    {
+        cout << descriptions[Cubpaths[randomNum]] << " your pride points change " << pridePointChanges[Cubpaths[randomNum] - 1] <<endl;
+        if (playerAdvisor == toAdvisors[Cubpaths[randomNum] - 1])
+        {
+            cout << "Your advisor supports you!" << endl;
+            if (pridePointChanges[Cubpaths[randomNum]] > 0)
+            {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum]] - 1);
+            }
+        } else {
+            cout << "You get no advisor support" << endl;
+            if (Cubpaths[randomNum] < 21)
+            {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
+            } else if (toAdvisors[Cubpaths[randomNum] - 1] == 0) {
+                cout << "You sadly dont get any pride points" << endl;
+            }
+        }
+    } else {
+        cout << descriptions[Pridepaths[randomNum]] << " your pride points change " << pridePointChanges[Cubpaths[randomNum] - 1]  << endl;
+         if (playerAdvisor == toAdvisors[Cubpaths[randomNum] - 1])
+        {
+            cout << "Your advisor supports you!" << endl;
+            if (pridePointChanges[Cubpaths[randomNum]] > 0)
+            {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
+            }
+        } else {
+            cout << "You get no advisor support" << endl;
+            if (Cubpaths[randomNum] < 21)
+            {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
+            } else if (toAdvisors[Cubpaths[randomNum] - 1] == 0) {
+                cout << "You sadly dont get any pride points" << endl;
+            }
+        }
     }
 }
 
@@ -651,6 +685,8 @@ void Game::winscreen() {
     for (int i = 0; i < totalPlayers; i++) {
         outFile << "Player " << playerIndices[i] + 1 << ": " << totalPridepoints[i] << endl;
     }
+
+    cout << "Check the win_results.txt to see the letter board!" << endl;
 
     outFile.close(); // Close the file after writing
 }
