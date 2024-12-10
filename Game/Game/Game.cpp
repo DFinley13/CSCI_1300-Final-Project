@@ -596,45 +596,55 @@ void Game::winscreen() {
     outFile << "Congratulations players you have all completed your journey!" << endl;
 
     const int maxPlayers = 5; // Assuming max 5 players
-    vector<int> totalPridepoints(maxPlayers, 0);
-    vector<int> playerIndices(maxPlayers);
-    
-    for (int i = 0; i < maxPlayers; i++) {
-        playerIndices[i] = i; // Initialize player indices
-    }
+    int totalPridepoints[maxPlayers] = {0, 0, 0, 0, 0};
+    int playerIndices[maxPlayers] = {0, 1, 2, 3, 4};
 
     int totalPlayers = amountOfPlayers();
-    for (int i = 0; i < totalPlayers; i++) {
+    for (int i = 0; i < totalPlayers; i++)
+    {
         int totalPoints = _players[i].getPridePoints();
         int testStamina = _players[i].getStamina();
         int testStrength = _players[i].getStrength();
         int testWisdom = _players[i].getWisdom();
-
-        while (testStamina > 100) {
-            testStamina -= 100;
-            totalPoints += 1000;
-        }
-        while (testStrength > 100) {
-            testStrength -= 100;
-            totalPoints += 1000;
-        }
-        while (testWisdom > 100) {
-            testWisdom -= 100;
-            totalPoints += 1000;
-        }
+                while (testStamina > 100)
+                {
+                    testStamina -= 100;
+                    totalPoints += 1000;
+                }
+                while (testStrength > 100) {
+                    testStrength -= 100;
+                    totalPoints += 1000;
+                } 
+                while (testWisdom > 100) {
+                    testWisdom -= 100;
+                    totalPoints += 1000;
+                }
         totalPridepoints[i] = totalPoints;
     }
 
-    // Bubble sort with vectors
-    for (int i = 0; i < totalPlayers - 1; i++) {
-        for (int j = 0; j < totalPlayers - i - 1; j++) {
-            if (totalPridepoints[j] < totalPridepoints[j + 1]) { // Reverse the comparison
-                outFile << "swapping numbers: " << j << " and " << j + 1 << endl;
+    int n = amountOfPlayers();
 
-                swap(totalPridepoints[j], totalPridepoints[j + 1]);
-                swap(playerIndices[j], playerIndices[j + 1]);
+
+    //Bubble sort
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (totalPridepoints[j] < totalPridepoints[j + 1]) // Reverse the comparison
+            {
+                cout << "swapping numbers: " << j << " and " << j + 1 << endl;
+                int temp = totalPridepoints[j + 1];
+                totalPridepoints[j + 1] = totalPridepoints[j];
+                totalPridepoints[j] = temp;
+
+                int tempIndex = playerIndices[j + 1];
+                playerIndices[j + 1] = playerIndices[j];
+                playerIndices[j] = tempIndex;
             }
+
+            
         }
+        
     }
 
     outFile << "The pride points leader board is: " << endl;
