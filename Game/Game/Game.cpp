@@ -101,7 +101,6 @@ void Game::selectCharacters(int playerCount) {
         } else {
             _board.setPlayerLane(playerPath, i);
         }
-
     }
 
     // Confirm selections
@@ -496,7 +495,7 @@ void Game::tileAffect(string tilesColor, int player_index) {
         }
     } 
     else {
-        cout << "ERROR!!!" << endl;
+        winscreen();
         return;
     }
     
@@ -587,67 +586,61 @@ void Game::randomEvent(int player_index) {
 
 //The end win screen 
 void Game::winscreen() {
-    cout << "-----------------------------" << endl;
-    cout << "Congratulations players you have all completed your journey!" << endl; 
+    ofstream outFile("win_results.txt"); // Open the file to write the output
+    if (!outFile) {
+        cerr << "Error opening file!" << endl;
+        return;
+    }
+
+    outFile << "-----------------------------" << endl;
+    outFile << "Congratulations players you have all completed your journey!" << endl;
 
     const int maxPlayers = 5; // Assuming max 5 players
-    int totalPridepoints[maxPlayers] = {0, 0, 0, 0, 0};
-    int playerIndices[maxPlayers] = {0, 1, 2, 3, 4};
+    vector<int> totalPridepoints(maxPlayers, 0);
+    vector<int> playerIndices(maxPlayers);
+    
+    for (int i = 0; i < maxPlayers; i++) {
+        playerIndices[i] = i; // Initialize player indices
+    }
 
     int totalPlayers = amountOfPlayers();
-    for (int i = 0; i < totalPlayers; i++)
-    {
+    for (int i = 0; i < totalPlayers; i++) {
         int totalPoints = _players[i].getPridePoints();
         int testStamina = _players[i].getStamina();
         int testStrength = _players[i].getStrength();
         int testWisdom = _players[i].getWisdom();
-                while (testStamina > 100)
-                {
-                    testStamina -= 100;
-                    totalPoints += 1000;
-                }
-                while (testStrength > 100) {
-                    testStrength -= 100;
-                    totalPoints += 1000;
-                } 
-                while (testWisdom > 100) {
-                    testWisdom -= 100;
-                    totalPoints += 1000;
-                }
+
+        while (testStamina > 100) {
+            testStamina -= 100;
+            totalPoints += 1000;
+        }
+        while (testStrength > 100) {
+            testStrength -= 100;
+            totalPoints += 1000;
+        }
+        while (testWisdom > 100) {
+            testWisdom -= 100;
+            totalPoints += 1000;
+        }
         totalPridepoints[i] = totalPoints;
     }
 
-    int n = amountOfPlayers();
+    // Bubble sort with vectors
+    for (int i = 0; i < totalPlayers - 1; i++) {
+        for (int j = 0; j < totalPlayers - i - 1; j++) {
+            if (totalPridepoints[j] < totalPridepoints[j + 1]) { // Reverse the comparison
+                outFile << "swapping numbers: " << j << " and " << j + 1 << endl;
 
-
-    //Bubble sort
-    for (int i = 0; i < n - 1; i++)
-    {
-        for (int j = 0; j < n - i - 1; j++)
-        {
-            if (totalPridepoints[j] < totalPridepoints[j + 1]) // Reverse the comparison
-            {
-                cout << "swapping numbers: " << j << " and " << j + 1 << endl;
-                int temp = totalPridepoints[j + 1];
-                totalPridepoints[j + 1] = totalPridepoints[j];
-                totalPridepoints[j] = temp;
-
-                int tempIndex = playerIndices[j + 1];
-                playerIndices[j + 1] = playerIndices[j];
-                playerIndices[j] = tempIndex;
+                swap(totalPridepoints[j], totalPridepoints[j + 1]);
+                swap(playerIndices[j], playerIndices[j + 1]);
             }
-
-            
         }
-        
     }
-    
-    cout << "The pride points leader board is: " << endl;
 
-    for (int i = 0; i < n; i++)
-    {
-       cout << "Player: " << playerIndices[i] + 1 << ": " <<totalPridepoints[i] <<  endl;
+    outFile << "The pride points leader board is: " << endl;
+    for (int i = 0; i < totalPlayers; i++) {
+        outFile << "Player " << playerIndices[i] + 1 << ": " << totalPridepoints[i] << endl;
     }
-    
 
+    outFile.close(); // Close the file after writing
 }
