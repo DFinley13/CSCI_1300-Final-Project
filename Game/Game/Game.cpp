@@ -549,14 +549,14 @@ int Game::randomGenerator(int min, int max)
         idx++;
     }
 
-    vector<int> Clubpaths;
+    vector<int> Cubpaths;
     vector<int> Pridepaths;
 
     for (int i = 0; i < idx; i++)
     {
         if (paths[i] == 0)
         {
-            Clubpaths.push_back(i);
+            Cubpaths.push_back(i);
         } else {
             Pridepaths.push_back(i);
         }
@@ -582,38 +582,38 @@ int Game::randomGenerator(int min, int max)
 
     if (_board.getPlayerLane(player_index) == 0)
     {
-        cout << descriptions[Clubpaths[randomNum]] << " your pride points change " << pridePointChanges[Clubpaths[randomNum] - 1] <<endl;
-        if (playerAdvisor == toAdvisors[Clubpaths[randomNum] - 1])
+        cout << descriptions[Cubpaths[randomNum]] << " your pride points change " << pridePointChanges[Cubpaths[randomNum] - 1] <<endl;
+        if (playerAdvisor == toAdvisors[Cubpaths[randomNum] - 1])
         {
             cout << "Your advisor supports you!" << endl;
-            if (pridePointChanges[Clubpaths[randomNum]] > 0)
+            if (pridePointChanges[Cubpaths[randomNum]] > 0)
             {
-                _players[player_index].addPridePoints(pridePointChanges[Clubpaths[randomNum]] - 1);
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum]] - 1);
             }
         } else {
             cout << "You get no advisor support" << endl;
-            if (Clubpaths[randomNum] < 21)
+            if (Cubpaths[randomNum] < 21)
             {
-                _players[player_index].addPridePoints(pridePointChanges[Clubpaths[randomNum] - 1]);
-            } else if (toAdvisors[Clubpaths[randomNum] - 1] == 0) {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
+            } else if (toAdvisors[Cubpaths[randomNum] - 1] == 0) {
                 cout << "You sadly dont get any pride points" << endl;
             }
         }
     } else {
-        cout << descriptions[Pridepaths[randomNum]] << " your pride points change " << pridePointChanges[Clubpaths[randomNum] - 1]  << endl;
-         if (playerAdvisor == toAdvisors[Clubpaths[randomNum] - 1])
+        cout << descriptions[Pridepaths[randomNum]] << " your pride points change " << pridePointChanges[Cubpaths[randomNum] - 1]  << endl;
+         if (playerAdvisor == toAdvisors[Cubpaths[randomNum] - 1])
         {
             cout << "Your advisor supports you!" << endl;
-            if (pridePointChanges[Clubpaths[randomNum]] > 0)
+            if (pridePointChanges[Cubpaths[randomNum]] > 0)
             {
-                _players[player_index].addPridePoints(pridePointChanges[Clubpaths[randomNum] - 1]);
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
             }
         } else {
             cout << "You get no advisor support" << endl;
-            if (Clubpaths[randomNum] < 21)
+            if (Cubpaths[randomNum] < 21)
             {
-                _players[player_index].addPridePoints(pridePointChanges[Clubpaths[randomNum] - 1]);
-            } else if (toAdvisors[Clubpaths[randomNum] - 1] == 0) {
+                _players[player_index].addPridePoints(pridePointChanges[Cubpaths[randomNum] - 1]);
+            } else if (toAdvisors[Cubpaths[randomNum] - 1] == 0) {
                 cout << "You sadly dont get any pride points" << endl;
             }
         }
@@ -632,8 +632,8 @@ void Game::winscreen() {
     outFile << "Congratulations players you have all completed your journey!" << endl;
 
     const int maxPlayers = 5; // Assuming max 5 players
-    int totalPridepoints[maxPlayers] = {0, 0, 0, 0, 0};
-    int playerIndices[maxPlayers] = {0, 1, 2, 3, 4};
+    vector<int> totalPridepoints(maxPlayers, 0);
+    vector<int> playerIndices(maxPlayers);
     
     for (int i = 0; i < maxPlayers; i++) {
         playerIndices[i] = i; // Initialize player indices
@@ -665,6 +665,7 @@ void Game::winscreen() {
     for (int i = 0; i < totalPlayers - 1; i++) {
         for (int j = 0; j < totalPlayers - i - 1; j++) {
             if (totalPridepoints[j] < totalPridepoints[j + 1]) { // Reverse the comparison
+                outFile << "swapping numbers: " << j << " and " << j + 1 << endl;
 
                 swap(totalPridepoints[j], totalPridepoints[j + 1]);
                 swap(playerIndices[j], playerIndices[j + 1]);
@@ -676,8 +677,9 @@ void Game::winscreen() {
     for (int i = 0; i < totalPlayers; i++) {
         outFile << "Player " << playerIndices[i] + 1 << ": " << totalPridepoints[i] << endl;
     }
-
+    
     cout << "Check the win_results.txt to see the letter board!" << endl;
 
     outFile.close(); // Close the file after writing
 }
+

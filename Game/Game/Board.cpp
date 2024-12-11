@@ -229,7 +229,7 @@ int Board::getPlayerCount() {
 string Board::getBoardType(int player_index) {
     if (player_index == 0)
     {
-       return "Club Training";
+       return "Cub Training";
     } else {
         return "Straight to the Pride Lands";
     }
