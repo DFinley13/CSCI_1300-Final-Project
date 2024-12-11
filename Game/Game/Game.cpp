@@ -632,8 +632,8 @@ void Game::winscreen() {
     outFile << "Congratulations players you have all completed your journey!" << endl;
 
     const int maxPlayers = 5; // Assuming max 5 players
-    vector<int> totalPridepoints(maxPlayers, 0);
-    vector<int> playerIndices(maxPlayers);
+    int totalPridepoints[maxPlayers] = {0, 0, 0, 0, 0};
+    int playerIndices[maxPlayers] = {0, 1, 2, 3, 4};
     
     for (int i = 0; i < maxPlayers; i++) {
         playerIndices[i] = i; // Initialize player indices
@@ -665,7 +665,6 @@ void Game::winscreen() {
     for (int i = 0; i < totalPlayers - 1; i++) {
         for (int j = 0; j < totalPlayers - i - 1; j++) {
             if (totalPridepoints[j] < totalPridepoints[j + 1]) { // Reverse the comparison
-                outFile << "swapping numbers: " << j << " and " << j + 1 << endl;
 
                 swap(totalPridepoints[j], totalPridepoints[j + 1]);
                 swap(playerIndices[j], playerIndices[j + 1]);
@@ -677,9 +676,8 @@ void Game::winscreen() {
     for (int i = 0; i < totalPlayers; i++) {
         outFile << "Player " << playerIndices[i] + 1 << ": " << totalPridepoints[i] << endl;
     }
-    
+
     cout << "Check the win_results.txt to see the letter board!" << endl;
 
     outFile.close(); // Close the file after writing
 }
-
